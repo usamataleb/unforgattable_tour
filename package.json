@@ -32,5 +32,11 @@
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.20.0",
 		"vite": "^7.0.4"
+	},
+	"dependencies": {
+		"flowbite-svelte": "^1.12.6",
+		"font-awesome": "^4.7.0",
+		"svelte-gallery": "^1.3.5",
+		"svelte-image-gallery": "^1.8.0"
 	}
 }
