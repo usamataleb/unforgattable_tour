@@ -13,9 +13,10 @@
 
 .btn-primary {
 	background-color: var(--gray) !important;
+	border-color: var(--secondary) !important;
 }
 
-.text-primary{
+.text-primary {
 	color: var(--primary) !important;
 }
 
@@ -447,4 +448,42 @@
 	margin-right: 0;
 	padding-right: 0;
 	border-right: none;
+}
+
+
+
+
+/*** Header ***/
+.carousel-caption {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(15, 23, 43, 0.7);
+	z-index: 1;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+	width: 10%;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+	width: 3rem;
+	height: 3rem;
+}
+
+@media (max-width: 768px) {
+	#header-carousel .carousel-item {
+		position: relative;
+		min-height: 450px;
+	}
+
+	#header-carousel .carousel-item img {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
 }
