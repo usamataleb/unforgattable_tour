@@ -5,7 +5,7 @@
 	import Destination from "../lib/components/Destination.svelte";
 	import Hero from "../lib/components/Hero.svelte";
 	import OurService from "../lib/components/OurService.svelte";
-	import Packages from "../lib/components/packages/+page.svelte";
+	import Packages from "../lib/components/packages/PackageGrid.svelte";
 	import Process from "../lib/components/Process.svelte";
 	import Team from "../lib/components/Team.svelte";
 	import Testimonial from "../lib/components/Testimonial.svelte";

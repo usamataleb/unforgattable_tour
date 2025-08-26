@@ -4,7 +4,7 @@
 	</div>
 	<div class="d-flex border-bottom">
 		<small class="flex-fill text-center border-end py-2"
-			><i class="fa fa-map-marker-alt text-primary me-2"></i>Indonesia</small
+			><i class="fa fa-map-marker-alt text-primary me-2"></i>Zanzibar Stone Town & Prison Island Tour</small
 		>
 		<small class="flex-fill text-center border-end py-2"
 			><i class="fa fa-calendar-alt text-primary me-2"></i>3 days</small
@@ -25,7 +25,7 @@
 		<p>Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit diam amet diam eos</p>
 		<div class="d-flex justify-content-center mb-2">
 			<a
-				href="#"
+				href="/package"
 				class="btn btn-sm btn-primary px-3 border-end"
 				style="border-radius: 30px 0 0 30px;">Read More</a
 			>

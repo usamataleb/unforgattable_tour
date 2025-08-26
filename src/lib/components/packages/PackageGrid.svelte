@@ -1,5 +1,5 @@
 <script>
-	import Packages from "./_components/Packages.svelte";
+	import Packages from "./_components/Package.svelte";
 
 </script>
     <!-- Package Start -->

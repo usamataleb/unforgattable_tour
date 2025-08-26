@@ -4,7 +4,7 @@
 		<a href="/" class="navbar-brand p-0">
 			<h1 class="text-primary m-0">
 				<img src="./logo.png" alt="" />
-				<strong class="d-none d-lg-block"> Unforgettable Tours & Safari </strong>
+				 Unforgettable Tours & Safari
 			</h1>
 			<!-- <img src="img/logo.png" alt="Logo"> -->
 		</a>
