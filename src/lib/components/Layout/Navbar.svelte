@@ -19,12 +19,35 @@
 
 </script>
 
+
+<script>
+
+	import { onMount } from "svelte";
+	import { page } from "$app/stores";
+
+	let currentPath = "";
+
+	// Subscribe to the page store to get the current path
+	const unsubscribe = page.subscribe(($page) => {
+		currentPath = $page.url.pathname;
+	});
+
+	onMount(() => {
+		return () => {
+			unsubscribe();
+		};
+	});
+
+</script>
+
 <!-- Navbar -->
 <div class="container-fluid position-relative p-0">
 	<nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
 		<a href="/" class="navbar-brand p-0">
 			<h1 class="text-primary m-0 d-none d-lg-block">
+			<h1 class="text-primary m-0 d-none d-lg-block">
 				<img src="./logo.png" alt="" />
+				Unforgettable Tours & Safari
 				Unforgettable Tours & Safari
 			</h1>
 			<!-- <img src="img/logo.png" alt="Logo"> -->
