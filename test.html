@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* Glass morphism container */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(78, 205, 196, 0.3);
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .dashboard.active {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 280px;
+            padding: 30px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #4ecdc4;
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px 30px;
+            border-radius: 15px;
+        }
+
+        .welcome-text h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            background: linear-gradient(45deg, #fff, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-text p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .image-card {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .image-card:hover {
+            transform: scale(1.05);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8));
+            display: flex;
+            align-items: flex-end;
+            padding: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-card:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .image-info {
+            flex: 1;
+        }
+
+        .image-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            background: #4ecdc4;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .upload-zone:hover, .upload-zone.drag-over {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #4ecdc4;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 20px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Error/Success Messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            color: #4caf50;
+        }
+
+        .alert-error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            color: #f44336;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card glass">
+            <div class="logo float">
+                <i class="fas fa-crown"></i> Admin
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-input" placeholder="admin@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            <div id="loginError" class="alert alert-error hidden"></div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div>
+                    <h3>Admin Panel</h3>
+                    <p style="font-size: 12px; opacity: 0.7;">v2.0</p>
+                </div>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-section="overview">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="images">
+                            <i class="fas fa-images"></i>
+                            <span>Images</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="carousel">
+                            <i class="fas fa-sliders-h"></i>
+                            <span>Carousel</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar glass">
+                <div class="welcome-text">
+                    <h1>Welcome back!</h1>
+                    <p>Manage your content with ease</p>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar" id="userAvatar">A</div>
+                    <div>
+                        <div style="font-weight: 600;" id="userName">Admin</div>
+                        <div style="font-size: 12px; opacity: 0.7;">Administrator</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overview Section -->
+            <div id="overview" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card glass">
+                        <div class="stat-icon">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <div class="stat-number" id="totalImages">0</div>
+                        <div class="stat-label">Total Images</div>
+                    </div>
+                    <div class="stat-card glass">
+                        <div class="stat-icon">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <div class="stat-number" id="totalCarousel">0</div>
+                        <div class="stat-label">Carousel Items</div>
+                    </div>
+                    <div class="stat-card glass">
+                        <div class="stat-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-number" id="activeCarousel">0</div>
+                        <div class="stat-label">Active Carousel</div>
+                    </div>
+                    <div class="stat-card glass">
+                        <div class="stat-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="stat-number">100MB</div>
+                        <div class="stat-label">Storage Used</div>
+                    </div>
+                </div>
+
+                <div class="glass" style="padding: 30px;">
+                    <h2 style="margin-bottom: 20px;">Quick Actions</h2>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="showSection('images')">
+                            <i class="fas fa-upload"></i> Upload Image
+                        </button>
+                        <button class="btn btn-primary" onclick="showSection('carousel')">
+                            <i class="fas fa-plus"></i> Add Carousel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images Section -->
+            <div id="images" class="content-section">
+                <div class="glass" style="padding: 30px; margin-bottom: 30px;">
+                    <h2 style="margin-bottom: 20px;">Image Management</h2>
+                    
+                    <div class="upload-zone" onclick="document.getElementById('imageUpload').click()">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3>Drop images here or click to upload</h3>
+                        <p>Supports JPG, PNG, WebP up to 5MB</p>
+                        <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;">
+                    </div>
+                    
+                    <div id="uploadProgress" class="hidden">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <p id="uploadStatus">Uploading...</p>
+                    </div>
+                </div>
+
+                <div class="glass" style="padding: 30px;">
+                    <h3 style="margin-bottom: 20px;">Your Images</h3>
+                    <div id="imageGallery" class="image-gallery">
+                        <!-- Images will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carousel Section -->
+            <div id="carousel" class="content-section">
+                <div class="glass" style="padding: 30px; margin-bottom: 30px;">
+                    <h2 style="margin-bottom: 20px;">Carousel Management</h2>
+                    <button class="btn btn-primary" onclick="openCarouselModal()">
+                        <i class="fas fa-plus"></i> Add Carousel Item
+                    </button>
+                </div>
+
+                <div class="glass" style="padding: 30px;">
+                    <h3 style="margin-bottom: 20px;">Carousel Items</h3>
+                    <div id="carouselList">
+                        <!-- Carousel items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Carousel Modal -->
+    <div id="carouselModal" class="modal">
+        <div class="modal-content glass">
+            <button class="modal-close" onclick="closeCarouselModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 style="margin-bottom: 30px;">Add Carousel Item</h2>
+            <form id="carouselForm">
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="url" id="carouselImage" class="form-input" placeholder="https://example.com/image.jpg" required>
+                </div>
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="carouselTitle" class="form-input" placeholder="Enter title" required>
+                </div>
+                <div class="form-group">
+                    <label>Subtitle</label>
+                    <input type="text" id="carouselSubtitle" class="form-input" placeholder="Enter subtitle (optional)">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="carouselActive" checked>
+                        Active
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Carousel Item
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'http://localhost:3000';
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = null;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            if (authToken) {
+                checkAuth();
+            } else {
+                showLogin();
+            }
+            
+            setupEventListeners();
+            initializeAnimations();
+        });
+
+        function setupEventListeners() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (e.target.dataset.section) {
+                        e.preventDefault();
+                        showSection(e.target.dataset.section);
+                        
+                        // Update active nav
+                        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                        e.target.classList.add('active');
+                    }
+                });
+            });
+
+            // Image upload
+            document.getElementById('imageUpload').addEventListener('change', handleImageUpload);
+            
+            // Drag and drop
+            const uploadZone = document.querySelector('.upload-zone');
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('drag-over');
+            });
+            
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('drag-over');
+            });
+            
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                handleImageUpload({ target: { files } });
+            });
+
+            // Carousel form
+            document.getElementById('carouselForm').addEventListener('submit', handleCarouselSubmit);
+        }
+
+        function initializeAnimations() {
+            // Animate stats on load
+            gsap.from('.stat-card', {
+                duration: 0.8,
+                y: 50,
+                opacity: 0,
+                stagger: 0.1,
+                ease: "power2.out"
+            });
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    authToken = data.token;
+                    currentUser = data.user;
+                    localStorage.setItem('authToken', authToken);
+                    showDashboard();
+                    loadDashboardData();
+                } else {
+                    showError('loginError', data.error);
+                }
+            } catch (error) {
+                showError('loginError', 'Connection error. Please try again.');
+            }
+        }
+
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUser = data.user;
+                    showDashboard();
+                    loadDashboardData();
+                } else {
+                    localStorage.removeItem('authToken');
+                    showLogin();
+                }
+            } catch (error) {
+                localStorage.removeItem('authToken');
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboard').classList.remove('active');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.username;
+                document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+            }
+        }
+
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionName).classList.add('active');
+
+            // Load section-specific data
+            if (sectionName === 'images') {
+                loadImages();
+            } else if (sectionName === 'carousel') {
+                loadCarousel();
+            }
+        }
+
+        async function loadDashboardData() {
+            try {
+                // Load images count
+                const imagesResponse = await fetch(`${API_BASE}/images`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                const imagesData = await imagesResponse.json();
+                if (imagesData.success) {
+                    document.getElementById('totalImages').textContent = imagesData.images.length;
+                }
+
+                // Load carousel count
+                const carouselResponse = await fetch(`${API_BASE}/admin/carousel`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                const carouselData = await carouselResponse.json();
+                if (carouselData.success) {
+                    document.getElementById('totalCarousel').textContent = carouselData.items.length;
+                    document.getElementById('activeCarousel').textContent = 
+                        carouselData.items.filter(item => item.active).length;
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+            }
+        }
+
+        async function loadImages() {
+            try {
+                const response = await fetch(`${API_BASE}/images`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const gallery = document.getElementById('imageGallery');
+                    gallery.innerHTML = '';
+
+                    data.images.forEach(image => {
+                        const imageCard = document.createElement('div');
+                        imageCard.className = 'image-card glass';
+                        imageCard.innerHTML = `
+                            <img src="${image.url}" alt="Uploaded image" loading="lazy">
+                            <div class="image-overlay">
+                                <div class="image-info">
+                                    <div style="font-size: 12px;">${image.width}x${image.height}</div>
+                                    <div style="font-size: 10px; opacity: 0.7;">${new Date(image.createdAt).toLocaleDateString()}</div>
+                                </div>
+                                <div class="image-actions">
+                                    <button class="btn-icon" onclick="copyImageUrl('${image.url}')" title="Copy URL">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="deleteImage(${image.id})" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        gallery.appendChild(imageCard);
+                    });
+
+                    // Animate images
+                    gsap.from('.image-card', {
+                        duration: 0.6,
+                        scale: 0.8,
+                        opacity: 0,
+                        stagger: 0.1,
+                        ease: "back.out(1.7)"
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load images:', error);
+            }
+        }
+
+        async function handleImageUpload(e) {
+            const files = e.target.files;
+            if (!files.length) return;
+
+            const progressContainer = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('progressFill');
+            const uploadStatus = document.getElementById('uploadStatus');
+
+            progressContainer.classList.remove('hidden');
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const formData = new FormData();
+                formData.append('image', file);
+
+                try {
+                    uploadStatus.textContent = `Uploading ${file.name}... (${i + 1}/${files.length})`;
+                    
+                    const response = await fetch(`${API_BASE}/upload`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const progress = ((i + 1) / files.length) * 100;
+                        progressFill.style.width = `${progress}%`;
+                        
+                        // Show success animation
+                        gsap.to(progressFill, {
+                            duration: 0.3,
+                            backgroundColor: '#4caf50'
+                        });
+                    } else {
+                        showAlert('Upload failed: ' + data.error, 'error');
+                    }
+                } catch (error) {
+                    showAlert('Upload error: ' + error.message, 'error');
+                }
+            }
+
+            setTimeout(() => {
+                progressContainer.classList.add('hidden');
+                progressFill.style.width = '0%';
+                loadImages();
+                loadDashboardData();
+            }, 1000);
+        }
+
+        async function loadCarousel() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/carousel`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const carouselList = document.getElementById('carouselList');
+                    carouselList.innerHTML = '';
+
+                    data.items.forEach(item => {
+                        const carouselItem = document.createElement('div');
+                        carouselItem.className = 'glass';
+                        carouselItem.style.cssText = 'padding: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 20px;';
+                        carouselItem.innerHTML = `
+                            <img src="${item.image}" alt="${item.title}" style="width: 100px; height: 60px; object-fit: cover; border-radius: 8px;">
+                            <div style="flex: 1;">
+                                <h4>${item.title}</h4>
+                                <p style="opacity: 0.7; font-size: 14px;">${item.subtitle || 'No subtitle'}</p>
+                                <span class="badge ${item.active ? 'badge-success' : 'badge-inactive'}">${item.active ? 'Active' : 'Inactive'}</span>
+                            </div>
+                            <div class="image-actions">
+                                <button class="btn-icon" onclick="toggleCarouselStatus(${item.id}, ${!item.active})" title="${item.active ? 'Deactivate' : 'Activate'}">
+                                    <i class="fas fa-${item.active ? 'eye-slash' : 'eye'}"></i>
+                                </button>
+                                <button class="btn-icon" onclick="deleteCarouselItem(${item.id})" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                        carouselList.appendChild(carouselItem);
+                    });
+
+                    // Animate carousel items
+                    gsap.from('#carouselList > div', {
+                        duration: 0.5,
+                        x: -50,
+                        opacity: 0,
+                        stagger: 0.1,
+                        ease: "power2.out"
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load carousel:', error);
+            }
+        }
+
+        async function handleCarouselSubmit(e) {
+            e.preventDefault();
+            
+            const image = document.getElementById('carouselImage').value;
+            const title = document.getElementById('carouselTitle').value;
+            const subtitle = document.getElementById('carouselSubtitle').value;
+            const active = document.getElementById('carouselActive').checked;
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/carousel`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ image, title, subtitle, active })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeCarouselModal();
+                    loadCarousel();
+                    loadDashboardData();
+                    showAlert('Carousel item created successfully!', 'success');
+                } else {
+                    showAlert('Failed to create carousel item: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Error creating carousel item: ' + error.message, 'error');
+            }
+        }
+
+        function openCarouselModal() {
+            document.getElementById('carouselModal').classList.add('active');
+            document.getElementById('carouselForm').reset();
+            
+            // Animate modal
+            gsap.from('.modal-content', {
+                duration: 0.3,
+                scale: 0.8,
+                opacity: 0,
+                ease: "back.out(1.7)"
+            });
+        }
+
+        function closeCarouselModal() {
+            document.getElementById('carouselModal').classList.remove('active');
+        }
+
+        function copyImageUrl(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                showAlert('Image URL copied to clipboard!', 'success');
+            });
+        }
+
+        async function deleteImage(id) {
+            if (!confirm('Are you sure you want to delete this image?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/images/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    loadImages();
+                    loadDashboardData();
+                    showAlert('Image deleted successfully!', 'success');
+                } else {
+                    showAlert('Failed to delete image', 'error');
+                }
+            } catch (error) {
+                showAlert('Error deleting image: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteCarouselItem(id) {
+            if (!confirm('Are you sure you want to delete this carousel item?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/carousel/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    loadCarousel();
+                    loadDashboardData();
+                    showAlert('Carousel item deleted successfully!', 'success');
+                } else {
+                    showAlert('Failed to delete carousel item', 'error');
+                }
+            } catch (error) {
+                showAlert('Error deleting carousel item: ' + error.message, 'error');
+            }
+        }
+
+        async function toggleCarouselStatus(id, active) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/carousel/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ active })
+                });
+
+                if (response.ok) {
+                    loadCarousel();
+                    loadDashboardData();
+                    showAlert(`Carousel item ${active ? 'activated' : 'deactivated'}!`, 'success');
+                } else {
+                    showAlert('Failed to update carousel item', 'error');
+                }
+            } catch (error) {
+                showAlert('Error updating carousel item: ' + error.message, 'error');
+            }
+        }
+
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 1001; min-width: 300px;';
+            
+            document.body.appendChild(alert);
+            
+            // Animate in
+            gsap.from(alert, {
+                duration: 0.3,
+                x: 300,
+                opacity: 0,
+                ease: "power2.out"
+            });
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                gsap.to(alert, {
+                    duration: 0.3,
+                    x: 300,
+                    opacity: 0,
+                    ease: "power2.in",
+                    onComplete: () => alert.remove()
+                });
+            }, 3000);
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+            
+            setTimeout(() => {
+                errorElement.classList.add('hidden');
+            }, 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('authToken');
+                authToken = null;
+                currentUser = null;
+                showLogin();
+                
+                // Reset forms
+                document.getElementById('loginForm').reset();
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById('overview').classList.add('active');
+                
+                // Reset nav
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                document.querySelector('[data-section="overview"]').classList.add('active');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+        });
+
+        // Auto-refresh data every 30 seconds
+        setInterval(() => {
+            if (authToken && document.getElementById('dashboard').classList.contains('active')) {
+                loadDashboardData();
+            }
+        }, 30000);
+
+        // Add some missing CSS for badges
+        const additionalCSS = `
+            .badge {
+                display: inline-block;
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 11px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            
+            .badge-success {
+                background: rgba(76, 175, 80, 0.2);
+                color: #4caf50;
+                border: 1px solid rgba(76, 175, 80, 0.3);
+            }
+            
+            .badge-inactive {
+                background: rgba(158, 158, 158, 0.2);
+                color: #9e9e9e;
+                border: 1px solid rgba(158, 158, 158, 0.3);
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = additionalCSS;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

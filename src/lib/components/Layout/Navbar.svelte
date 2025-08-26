@@ -19,35 +19,12 @@
 
 </script>
 
-
-<script>
-
-	import { onMount } from "svelte";
-	import { page } from "$app/stores";
-
-	let currentPath = "";
-
-	// Subscribe to the page store to get the current path
-	const unsubscribe = page.subscribe(($page) => {
-		currentPath = $page.url.pathname;
-	});
-
-	onMount(() => {
-		return () => {
-			unsubscribe();
-		};
-	});
-
-</script>
-
 <!-- Navbar -->
 <div class="container-fluid position-relative p-0">
 	<nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
 		<a href="/" class="navbar-brand p-0">
 			<h1 class="text-primary m-0 d-none d-lg-block">
-			<h1 class="text-primary m-0 d-none d-lg-block">
 				<img src="./logo.png" alt="" />
-				Unforgettable Tours & Safari
 				Unforgettable Tours & Safari
 			</h1>
 			<!-- <img src="img/logo.png" alt="Logo"> -->
@@ -62,10 +39,11 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarCollapse">
 			<div class="navbar-nav ms-auto py-0">
-				<a href="/" class="nav-item nav-link active">Home</a>
-				<a href="about" class="nav-item nav-link">About</a>
-				<a href="service" class="nav-item nav-link">Services</a>
-				<a href="packages" class="nav-item nav-link">Packages</a>
+				<a href="/" class="nav-item nav-link" class:active={ currentPath === "/" } >Home</a>
+				<a href="about" class="nav-item nav-link" class:active={ currentPath === "/about" }  >About</a>
+				<a href="service" class="nav-item nav-link" class:active={ currentPath === "/service" }  >Services</a>
+				<a href="gallery" class="nav-item nav-link" class:active={ currentPath === "/gallery" }  >Gallery</a>
+				<a href="packages" class="nav-item nav-link" class:active={ currentPath === "/packages" }  >Packages</a>
 				<!-- <div class="nav-item dropdown">
 					<a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
 					<div class="dropdown-menu m-0">
