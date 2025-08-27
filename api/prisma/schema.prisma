@@ -6,16 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "sqlite" // or "sqlite", "mysql", etc.
   url      = env("DATABASE_URL")
-}
-
-model Image {
-  id        Int      @id @default(autoincrement())
-  url       String
-  width     Int?
-  height    Int?
-  createdAt DateTime @default(now())
 }
 
 model User {
@@ -23,21 +15,72 @@ model User {
   username  String   @unique
   email     String   @unique
   password  String
+  images    Image[]
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
 }
 
-model Package {
-  id          Int      @id @default(autoincrement())
-  name        String
-  price       Float
-  location    String
-  description String?
+model Image {
+  id        Int        @id @default(autoincrement())
+  url       String
+  width     Int
+  height    Int
+  filename  String? // Store original filename
+  filesize  Int? // Store file size in bytes
+  mimetype  String? // Store MIME type
+  userId    Int
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  ImageTag  ImageTag[]
+
+  @@map("images")
 }
 
 model CarouselItem {
-  id       Int     @id @default(autoincrement())
-  image    String
-  title    String
-  subtitle String?
-  active   Boolean @default(false)
+  id        Int      @id @default(autoincrement())
+  image     String // URL to the image
+  title     String
+  subtitle  String?
+  active    Boolean  @default(true)
+  order     Int? // For custom ordering
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("carousel_items")
+}
+
+// Optional: If you want to add tags or categories to images
+model Tag {
+  id     Int        @id @default(autoincrement())
+  name   String     @unique
+  images ImageTag[]
+
+  @@map("tags")
+}
+
+model ImageTag {
+  id      Int   @id @default(autoincrement())
+  imageId Int
+  tagId   Int
+  image   Image @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  tag     Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([imageId, tagId])
+  @@map("image_tags")
+}
+
+// Optional: Activity log for admin monitoring
+model ActivityLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  action    String // "upload", "delete", "login", etc.
+  details   String? // JSON string with additional details
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@map("activity_logs")
 }
