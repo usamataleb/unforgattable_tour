@@ -17,7 +17,8 @@ export interface CarouselItem {
   active: boolean;
 }
 export interface Image {
-  url: string;
+  src: string;
+  alt: string;
   width?: number;
   height?: number;
 }

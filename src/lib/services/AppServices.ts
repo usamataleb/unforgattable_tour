@@ -1,32 +1,39 @@
+import axios, { type AxiosResponse, type AxiosError } from 'axios';
 import type { Image, CarouselItem } from "$lib/constant/interfaces";
 
-export default class PublicAppService {
+export default class AppService {
   static API_BASE = "http://localhost:3000";
 
-  // Helper method to handle API responses
-  private static async handleResponse<T>(response: Response): Promise<T> {
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${errorText}`);
+  // Configure axios instance with default settings
+  private static axiosInstance = axios.create({
+    baseURL: this.API_BASE,
+    timeout: 10000,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
+
+  private static handleAxiosError(error: AxiosError): void {
+    if (error.response) {
+      throw new Error(`HTTP ${error.response.status}: ${error.response.data || error.message}`);
+    } else if (error.request) {
+      throw new Error('Network error: No response received');
+    } else {
+      throw new Error(`Request error: ${error.message}`);
     }
-    return response.json();
   }
 
   static async getWebsiteGallery(): Promise<Image[]> {
     try {
-      const res = await fetch(`${this.API_BASE}/images/websiteId/1`, {
-        method: 'GET',
-
-      });
-
-      if(!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+      const response: AxiosResponse<{ success: boolean; images: Image[] }> = 
+        await this.axiosInstance.get('/images/websiteId/1');      
+      return response.data.images || [];
+    } catch (error) {
+      console.error("PublicAppService.getGalleryImages error:", error);
+      if (axios.isAxiosError(error)) {
+        this.handleAxiosError(error);
       }
-
-      const data = await this.handleResponse<{ success: boolean; items: Image[] }>(res);
-      return data.items || [];
-    } catch (err) {
-      console.error("PublicAppService.getGalleryImages error:", err);
       return [];
     }
   }
@@ -34,75 +41,61 @@ export default class PublicAppService {
   // Get carousel items (public endpoint)
   static async getCarousel(): Promise<CarouselItem[]> {
     try {
-      const res = await fetch(`${this.API_BASE}/carousel`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-        cache: 'default' // Browser can cache this
-      });
-
-      const data = await this.handleResponse<{ success: boolean; items: CarouselItem[] }>(res);
-      return data.items || [];
-    } catch (err) {
-      console.error("PublicAppService.getCarousel error:", err);
+      const response: AxiosResponse<{ success: boolean; items: CarouselItem[] }> = 
+        await this.axiosInstance.get('/carousel');
+      
+      return response.data.items || [];
+    } catch (error) {
+      console.error("PublicAppService.getCarousel error:", error);
+      if (axios.isAxiosError(error)) {
+        this.handleAxiosError(error);
+      }
       return [];
     }
   }
 
   static async healthCheck(): Promise<boolean> {
     try {
-      const res = await fetch(`${this.API_BASE}/health`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-        // Short timeout for health checks
-        signal: AbortSignal.timeout(5000)
-      });
-
-      const data = await res.json();
-      return data.status === "OK";
-    } catch (err) {
-      console.error("PublicAppService.healthCheck error:", err);
+      const response: AxiosResponse<{ status: string }> = 
+        await this.axiosInstance.get('/health', {
+          timeout: 5000 // Override default timeout for health checks
+        });
+      
+      return response.data.status === "OK";
+    } catch (error) {
+      console.error("PublicAppService.healthCheck error:", error);
       return false;
     }
   }
 
-  // Get public packages (if you have this endpoint)
+  // Get public packages
   static async getPackages(): Promise<unknown[]> {
     try {
-      const res = await fetch(`${this.API_BASE}/public/packages`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-        cache: 'default'
-      });
-
-      const data = await this.handleResponse<{ success: boolean; packages: unknown[] }>(res);
-      return data.packages || [];
-    } catch (err) {
-      console.error("PublicAppService.getPackages error:", err);
+      const response: AxiosResponse<{ success: boolean; packages: unknown[] }> = 
+        await this.axiosInstance.get('/public/packages');
+      
+      return response.data.packages || [];
+    } catch (error) {
+      console.error("PublicAppService.getPackages error:", error);
+      if (axios.isAxiosError(error)) {
+        this.handleAxiosError(error);
+      }
       return [];
     }
   }
 
-  // Get public tours (if you have this endpoint)
+  // Get public tours (commented out as in original)
   // static async getTours(): Promise<any[]> {
   //   try {
-  //     const res = await fetch(`${this.API_BASE}/public/tours`, {
-  //       method: 'GET',
-  //       headers: {
-  //         'Accept': 'application/json',
-  //       },
-  //       cache: 'default'
-  //     });
-
-  //     const data = await this.handleResponse<{ success: boolean; tours: any[] }>(res);
-  //     return data.tours || [];
-  //   } catch (err) {
-  //     console.error("PublicAppService.getTours error:", err);
+  //     const response: AxiosResponse<{ success: boolean; tours: any[] }> = 
+  //       await this.axiosInstance.get('/public/tours');
+  //     
+  //     return response.data.tours || [];
+  //   } catch (error) {
+  //     console.error("PublicAppService.getTours error:", error);
+  //     if (axios.isAxiosError(error)) {
+  //       this.handleAxiosError(error);
+  //     }
   //     return [];
   //   }
   // }
@@ -110,17 +103,45 @@ export default class PublicAppService {
   // Generic GET method for any public endpoint
   static async getPublicData<T>(endpoint: string): Promise<T | null> {
     try {
-      const res = await fetch(`${this.API_BASE}${endpoint}`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        }
-      });
-
-      return await this.handleResponse<T>(res);
-    } catch (err) {
-      console.error(`PublicAppService.getPublicData error for ${endpoint}:`, err);
+      const response: AxiosResponse<T> = await this.axiosInstance.get(endpoint);
+      return response.data;
+    } catch (error) {
+      console.error(`PublicAppService.getPublicData error for ${endpoint}:`, error);
+      if (axios.isAxiosError(error)) {
+        this.handleAxiosError(error);
+      }
       return null;
     }
   }
+
+  // Additional utility methods you might find useful
+
+  // POST method for future use
+  static async postPublicData<T, D = unknown>(endpoint: string, data?: D): Promise<T | null> {
+    try {
+      const response: AxiosResponse<T> = await this.axiosInstance.post(endpoint, data);
+      return response.data;
+    } catch (error) {
+      console.error(`PublicAppService.postPublicData error for ${endpoint}:`, error);
+      if (axios.isAxiosError(error)) {
+        this.handleAxiosError(error);
+      }
+      return null;
+    }
+  }
+
+  // PUT method for future use
+  static async putPublicData<T, D = unknown>(endpoint: string, data?: D): Promise<T | null> {
+    try {
+      const response: AxiosResponse<T> = await this.axiosInstance.put(endpoint, data);
+      return response.data;
+    } catch (error) {
+      console.error(`PublicAppService.putPublicData error for ${endpoint}:`, error);
+      if (axios.isAxiosError(error)) {
+        this.handleAxiosError(error);
+      }
+      return null;
+    }
+  }
+
 }

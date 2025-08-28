@@ -194,9 +194,6 @@ export const getImageById = async (req, res) => {
 export const getWebsiteImages = async (req, res) => {
   try {
     const websiteId = req.params;
-
-    console.log('Website ID:', websiteId)
-
     const website = await prisma.website.findFirst({
       where: { 
         id: parseInt(websiteId.id),
@@ -220,9 +217,6 @@ export const getWebsiteImages = async (req, res) => {
         }
       }
     });
-    
-    console.log("Fetched images:", images);
-
     res.json({ success: true, images });
 
 
