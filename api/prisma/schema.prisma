@@ -6,58 +6,82 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite" // or "sqlite", "mysql", etc.
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  images    Image[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  email        String        @unique
+  password     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  websites     Website[]
+  activityLogs ActivityLog[]
 
+  @@index([email, username])
   @@map("users")
+}
+
+model Website {
+  id            Int            @id @default(autoincrement())
+  name          String         @unique
+  about         String
+  images        Image[]
+  carouselItems CarouselItem[]
+  userId        Int
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  isDefault     Boolean        @default(false) // Changed to isDefault for clarity
+
+  @@unique([userId, isDefault])
+  @@index([userId, name])
+  @@map("websites")
 }
 
 model Image {
   id        Int        @id @default(autoincrement())
-  url       String
+  src       String
   width     Int
   height    Int
-  filename  String? // Store original filename
-  filesize  Int? // Store file size in bytes
-  mimetype  String? // Store MIME type
-  userId    Int
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  filename  String?
+  filesize  Int?
+  mimetype  String?
+  websiteId Int
+  website   Website    @relation(fields: [websiteId], references: [id], onDelete: Cascade)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  ImageTag  ImageTag[]
+  imageTags ImageTag[]
 
+  @@unique([websiteId, src])
+  @@index([websiteId])
   @@map("images")
 }
 
 model CarouselItem {
   id        Int      @id @default(autoincrement())
-  image     String // URL to the image
+  image     String
   title     String
   subtitle  String?
   active    Boolean  @default(true)
-  order     Int? // For custom ordering
+  order     Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  websiteId Int
+  website   Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 
+  @@unique([websiteId, order]) // Prevent duplicate orders per website
+  @@index([websiteId, order])
   @@map("carousel_items")
 }
 
-// Optional: If you want to add tags or categories to images
 model Tag {
-  id     Int        @id @default(autoincrement())
-  name   String     @unique
-  images ImageTag[]
-
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  imageTags ImageTag[]
+  createdAt DateTime   @default(now())
   @@map("tags")
 }
 
@@ -69,18 +93,22 @@ model ImageTag {
   tag     Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@unique([imageId, tagId])
+  @@index([imageId])
+  @@index([tagId])
   @@map("image_tags")
 }
 
-// Optional: Activity log for admin monitoring
 model ActivityLog {
   id        Int      @id @default(autoincrement())
-  userId    Int?
+  userId    Int? // Made optional for system actions
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   action    String // "upload", "delete", "login", etc.
   details   String? // JSON string with additional details
   ipAddress String?
   userAgent String?
   createdAt DateTime @default(now())
 
+  @@index([userId, action])
+  @@index([createdAt])
   @@map("activity_logs")
 }

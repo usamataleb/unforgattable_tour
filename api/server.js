@@ -8,6 +8,8 @@ import { dirname } from 'path';
 import authRouter from './src/routers/auth.js';
 import imageRouter from './src/routers/images.js';
 import carouselRouter from './src/routers/carousel.js';
+import website from './src/routers/website.js';
+
 
 // Middleware
 import { limiter, uploadLimiter } from './src/middleware/rateLimit.js';
@@ -44,6 +46,7 @@ app.use('/uploads', (req, res, next) => {
 app.use("/auth", authRouter);
 app.use("/images", imageRouter);
 app.use("/carousel", carouselRouter);
+app.use("/website", website)
 
 // Health check endpoint
 app.get("/health", (req, res) => {

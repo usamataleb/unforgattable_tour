@@ -1,12 +1,36 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import Gallery from "svelte-gallery";
+	import type { Image } from '$lib/constant/interfaces';
+	import AppService from '$lib/services/AppServices';
+	import { onMount } from 'svelte';
+	import Gallery from 'svelte-gallery';
 
-  type Image = { src: string };
+	let images: Image[] = [];
+	let error = '';
+	let loading = true;
 
+	async function loadGalleryImages() {
+		loading = true;
+		try {
+			images = await AppService.getWebsiteGallery();
 
-  let  images: Image[] = [];
-  
+			console.log('Gallery images loaded:', images);
+		} catch (err) {
+			error = 'Failed to load carousel items';
+			console.error(err);
+		} finally {
+			loading = false;
+		}
+	}
+
+	onMount(async () => {
+		await loadGalleryImages();
+	});
+
 </script>
 
-<Gallery {images} rowHeight={220} gutter={10} />
+{#if images.length > 0}
+
+	<Gallery {images} rowHeight={220} gutter={10} />
+{:else}
+	<p>No images found</p>
+{/if}
