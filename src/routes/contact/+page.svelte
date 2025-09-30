@@ -3,5 +3,5 @@
 	import Hero from "$lib/components/Hero.svelte";
 
 </script>
-<Hero />
+<Hero path="Contact" />
 <ContactUs />

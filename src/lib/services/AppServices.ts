@@ -1,8 +1,8 @@
 import axios, { type AxiosResponse, type AxiosError } from 'axios';
-import type { Image, CarouselItem } from "$lib/constant/interfaces";
+import type { Image, Carousel, Package } from "$lib/constant/interfaces";
 
 export default class AppService {
-  static API_BASE = "http://localhost:3000";
+  static API_BASE = "https://api.usamatalib.com";
 
   // Configure axios instance with default settings
   private static axiosInstance = axios.create({
@@ -26,11 +26,10 @@ export default class AppService {
 
   static async getWebsiteGallery(): Promise<Image[]> {
     try {
-      const response: AxiosResponse<{ success: boolean; images: Image[] }> = 
-        await this.axiosInstance.get('/images/websiteId/1');      
-      return response.data.images || [];
+      const response: AxiosResponse<Image[]> =
+        await this.axiosInstance.get('/images/websiteId/1');
+      return response.data || [];
     } catch (error) {
-      console.error("PublicAppService.getGalleryImages error:", error);
       if (axios.isAxiosError(error)) {
         this.handleAxiosError(error);
       }
@@ -38,15 +37,14 @@ export default class AppService {
     }
   }
 
-  // Get carousel items (public endpoint)
-  static async getCarousel(): Promise<CarouselItem[]> {
+  static async getCarousel(): Promise<Carousel[]> {
     try {
-      const response: AxiosResponse<{ success: boolean; items: CarouselItem[] }> = 
-        await this.axiosInstance.get('/carousel');
-      
+      const response: AxiosResponse<{ success: boolean; items: Carousel[] }> = 
+        await this.axiosInstance.get('/carousel/websiteId/1');
       return response.data.items || [];
+
     } catch (error) {
-      console.error("PublicAppService.getCarousel error:", error);
+      console.error("AppService.getCarousel error:", error);
       if (axios.isAxiosError(error)) {
         this.handleAxiosError(error);
       }
@@ -58,25 +56,25 @@ export default class AppService {
     try {
       const response: AxiosResponse<{ status: string }> = 
         await this.axiosInstance.get('/health', {
-          timeout: 5000 // Override default timeout for health checks
+          timeout: 5000
         });
       
       return response.data.status === "OK";
     } catch (error) {
-      console.error("PublicAppService.healthCheck error:", error);
+      console.error("AppService.healthCheck error:", error);
       return false;
     }
   }
 
-  // Get public packages
-  static async getPackages(): Promise<unknown[]> {
+  // Get  packages
+  static async getWebsitePackages(): Promise<Package[]> {
     try {
-      const response: AxiosResponse<{ success: boolean; packages: unknown[] }> = 
-        await this.axiosInstance.get('/public/packages');
-      
-      return response.data.packages || [];
+      const response: AxiosResponse< Package[] > = 
+        await this.axiosInstance.get('/packages/public/website/1');
+
+      return response.data || [];
     } catch (error) {
-      console.error("PublicAppService.getPackages error:", error);
+      console.error("AppService.getPackages error:", error);
       if (axios.isAxiosError(error)) {
         this.handleAxiosError(error);
       }
@@ -84,15 +82,17 @@ export default class AppService {
     }
   }
 
-  // Get public tours (commented out as in original)
+  
+
+  // Get  tours (commented out as in original)
   // static async getTours(): Promise<any[]> {
   //   try {
   //     const response: AxiosResponse<{ success: boolean; tours: any[] }> = 
-  //       await this.axiosInstance.get('/public/tours');
+  //       await this.axiosInstance.get('//tours');
   //     
   //     return response.data.tours || [];
   //   } catch (error) {
-  //     console.error("PublicAppService.getTours error:", error);
+  //     console.error("AppService.getTours error:", error);
   //     if (axios.isAxiosError(error)) {
   //       this.handleAxiosError(error);
   //     }
@@ -100,13 +100,13 @@ export default class AppService {
   //   }
   // }
 
-  // Generic GET method for any public endpoint
-  static async getPublicData<T>(endpoint: string): Promise<T | null> {
+  // Generic GET method for any  endpoint
+  static async getData<T>(endpoint: string): Promise<T | null> {
     try {
       const response: AxiosResponse<T> = await this.axiosInstance.get(endpoint);
       return response.data;
     } catch (error) {
-      console.error(`PublicAppService.getPublicData error for ${endpoint}:`, error);
+      console.error(`AppService.getData error for ${endpoint}:`, error);
       if (axios.isAxiosError(error)) {
         this.handleAxiosError(error);
       }
@@ -117,12 +117,12 @@ export default class AppService {
   // Additional utility methods you might find useful
 
   // POST method for future use
-  static async postPublicData<T, D = unknown>(endpoint: string, data?: D): Promise<T | null> {
+  static async postData<T, D = unknown>(endpoint: string, data?: D): Promise<T | null> {
     try {
       const response: AxiosResponse<T> = await this.axiosInstance.post(endpoint, data);
       return response.data;
     } catch (error) {
-      console.error(`PublicAppService.postPublicData error for ${endpoint}:`, error);
+      console.error(`AppService.postData error for ${endpoint}:`, error);
       if (axios.isAxiosError(error)) {
         this.handleAxiosError(error);
       }
@@ -131,12 +131,12 @@ export default class AppService {
   }
 
   // PUT method for future use
-  static async putPublicData<T, D = unknown>(endpoint: string, data?: D): Promise<T | null> {
+  static async putData<T, D = unknown>(endpoint: string, data?: D): Promise<T | null> {
     try {
       const response: AxiosResponse<T> = await this.axiosInstance.put(endpoint, data);
       return response.data;
     } catch (error) {
-      console.error(`PublicAppService.putPublicData error for ${endpoint}:`, error);
+      console.error(`AppService.putData error for ${endpoint}:`, error);
       if (axios.isAxiosError(error)) {
         this.handleAxiosError(error);
       }

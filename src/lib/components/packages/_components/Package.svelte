@@ -1,17 +1,19 @@
 
 <script>
+	export let id;
 	export let name;
 	export let price;
 	export let location ;
 	export let description;
+	export let image;
 </script>
 
 <div class="package-item position-relative">
 	<div class="overflow-hidden position-relative">
-		<img class="img-fluid" src="img/package-2.jpg" alt="" />
+		<img class="img-fluid" src="{image}" alt="" />
 
 		<div class="bg-white text-primary fw-bold position-absolute top-0 end-0 m-3 py-1 px-2">
-			{price}
+			 ${price}
 		</div>
 	</div>
 
@@ -28,12 +30,7 @@
 		<p>{description}</p>
 
 		<div class="d-flex justify-content-center mb-2">
-			<a
-				href="/package"
-				class="btn btn-sm btn-primary px-3 border-end"
-				style="border-radius: 30px 0 0 30px;">Read More</a
-			>
-			<a href="#" class="btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;"
+			<a href="/package/{id}" class="btn btn-sm btn-primary px-3" style="border-radius:30px"
 				>Book Now</a
 			>
 		</div>

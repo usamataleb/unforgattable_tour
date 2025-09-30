@@ -4,5 +4,5 @@
 
 </script>
 
-<Hero/>
+<Hero path="Packages" />
 <PackageGrid />

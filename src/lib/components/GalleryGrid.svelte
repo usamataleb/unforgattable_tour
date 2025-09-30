@@ -6,9 +6,11 @@
 	let images: Image[] = [];
 	let error = '';
 	let loading = true;
-
 	let lightboxOpen = false;
 	let activeIndex: number = 0;
+
+	export let showReadMore: boolean = false;
+	export let limit: number = 1000;
 
 	async function loadGalleryImages() {
 		loading = true;
@@ -16,6 +18,7 @@
 			images = await AppService.getWebsiteGallery();
 		} catch (err) {
 			error = 'Failed to load gallery items';
+
 			console.error(err);
 		} finally {
 			loading = false;
@@ -43,9 +46,13 @@
 </script>
 
 {#if loading}
-	<p>Loading gallery...</p>
-{:else if error}a
-	<p>{error}</p>
+	<div class="loading-overlay">
+		<div class="spinner-border text-primary" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
+{:else if error}
+	<p class="text-danger text-center">{error}</p>
 {:else if images.length > 0}
 	<div class="container-xxl py-5">
 		<div class="container">
@@ -54,7 +61,7 @@
 				<h1 class="mb-5">Our Gallery</h1>
 			</div>
 			<div class="grid">
-				{#each images as img, i}
+				{#each images.slice(0, limit) as img, i}
 					<div
 						class="item {i % 2 === 0 ? 'item--large' : ''} {i % 3 === 0 ? 'item--medium' : ''}"
 						style="background-image: url({img.src});"
@@ -64,17 +71,24 @@
 								openLightbox(i);
 							}
 						}}
+						tabindex="0"
 					>
-						<div class="item__details">
+						<!-- <div class="item__details">
 							{#if img.width && img.height}
 								{img.width} × {img.height}
 							{:else}
 								Image
 							{/if}
-						</div>
+						</div> -->
 					</div>
 				{/each}
 			</div>
+
+			{#if showReadMore}
+				<div class="text-center">
+					<a class="btn btn-primary py-3 px-5 mt-5" href="/gallery">Show More Images</a>
+				</div>
+			{/if}
 		</div>
 	</div>
 

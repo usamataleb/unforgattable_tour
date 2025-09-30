@@ -25,7 +25,7 @@
 		<a href="/" class="navbar-brand p-0">
 			<h1 class="text-primary m-0 d-none d-lg-block">
 				<img src="./logo.png" alt="" />
-				Unforgettable Tours & Safari
+				Unforgettable Tours & Travel
 			</h1>
 			<!-- <img src="img/logo.png" alt="Logo"> -->
 		</a>

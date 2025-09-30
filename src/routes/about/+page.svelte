@@ -8,5 +8,5 @@
 	<meta name="description" content="About this app" />
 </svelte:head>
 
-<Hero />
+<Hero path="About" />
 <AboutUs />

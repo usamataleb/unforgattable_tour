@@ -3,5 +3,5 @@
 	import OurService from "$lib/components/OurService.svelte";
 
 </script>
-<Hero/>
+<Hero path="Services" />
 <OurService />
