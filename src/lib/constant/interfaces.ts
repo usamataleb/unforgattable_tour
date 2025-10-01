@@ -4,18 +4,31 @@
 //   password: string;
 // }
 
+// Package interface matching Prisma schema
 export interface Package {
   id: number;
   name: string;
-  src: string;
   location: string;
-  description: string;
+  fullDescription: string;
   highlights: string;
   includes: string;
   excludes: string;
   priceWithTransfer: number;
   priceWithoutTransfer: number;
+  websiteId: number;
+  images: PackageImage[];
+  createdAt: string;
+  updatedAt: string;
 }
+
+export interface PackageImage {
+  id: number;
+  src: string;
+  packageId: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 export interface Carousel {
   image: string;

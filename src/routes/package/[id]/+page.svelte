@@ -69,7 +69,7 @@
 
 					<!-- Full Description -->
 					<h6 class="mt-3">Full Description</h6>
-					<p class="mb-3">{selectedPackage?.description}</p>
+					<p class="mb-3">{selectedPackage?.fullDescription}</p>
 
 					<!-- Highlight -->
 					<h6>Highlights</h6>

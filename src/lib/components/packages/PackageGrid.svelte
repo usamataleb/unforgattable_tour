@@ -42,16 +42,15 @@
 						<Packages
 							id={pkg.id}
 							name={pkg.name}
-							image={pkg.src}
+							image={pkg.images && pkg.images.length > 0 ? pkg.images[0].src : 'img/package-1.jpg'}
 							price={pkg.priceWithTransfer}
 							location={pkg.location}
-							description={pkg.description}
+							description={pkg.fullDescription}
 						/>
 					</div>
 				{/if}
 			{/each}
 		</div>
-
 		{#if showReadMore}
 			<div class="text-center">
 				<a class="btn btn-primary py-3 px-5 mt-5" href="/packages">Show More Packages</a>
