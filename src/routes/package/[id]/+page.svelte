@@ -7,7 +7,7 @@
 	import type { Package } from '$lib/constant/interfaces';
 	import AppService from '$lib/services/AppServices';
 	import { onMount } from 'svelte';
-	import PackageSlider from '../_components/PackageSlider.svelte';
+	import PackageSlider from '$lib/components/PackageSlider.svelte';
 
 	let packageId = $page.params.id;
 	let packages: Package[] = [];
@@ -52,58 +52,127 @@
 			<h1 class="mb-5">{selectedPackage?.name}</h1>
 		</div>
 
-		<PackageSlider />
+		<PackageSlider images={selectedPackage?.images} />
 
 		<div class="row gy-5 gx-4">
 			<div class="col-lg-8 col-sm-6 pt-4 wow fadeInUp" data-wow-delay="0.1s">
+				<!-- Details Section with Consistent Design -->
 				<div class="position-relative border border-primary pt-5 pb-4 px-4">
 					<div
 						class="d-inline-flex align-items-center justify-content-center bg-primary rounded-circle position-absolute top-0 start-50 translate-middle shadow"
-						style="width: 100px; height: 100px;"
+						style="width: 80px; height: 80px;"
 					>
-						<i class="fa fa-info fa-3x text-white"></i>
+						<i class="fa fa-info fa-2x text-white"></i>
 					</div>
-					<h5 class="mt-4 text-center">Details</h5>
+					<h5 class="mt-4 text-center">Package Details</h5>
 					<hr class="w-25 mx-auto bg-primary mb-1" />
 					<hr class="w-50 mx-auto bg-primary mt-0" />
 
 					<!-- Full Description -->
-					<h6 class="mt-3">Full Description</h6>
-					<p class="mb-3">{selectedPackage?.fullDescription}</p>
+					<div class="detail-section mt-4">
+						<div class="d-flex align-items-start p-3 bg-light rounded mb-3">
+							<i class="fa fa-file-alt text-primary me-3 mt-1"></i>
+							<div class="flex-grow-1">
+								<h6 class="fw-semibold mb-2">Full Description</h6>
+								<p class="mb-0 text-dark">{selectedPackage?.fullDescription}</p>
+							</div>
+						</div>
+					</div>
 
-					<!-- Highlight -->
-					<h6>Highlights</h6>
-					<ul class="mb-3">
-						{#each highlights as item, index}
-							<li>{item}</li>
-						{/each}
-					</ul>
+					<!-- Highlights -->
+					<div class="detail-section">
+						<div class="d-flex align-items-start p-3 bg-white border rounded mb-3">
+							<i class="fa fa-star text-primary me-3 mt-1"></i>
+							<div class="flex-grow-1">
+								<h6 class="fw-semibold mb-2">Highlights</h6>
+								<ul class="list-unstyled mb-0">
+									{#each highlights as item, index}
+										<li class="mb-1">
+											<i class="fa fa-check text-success me-2"></i>
+											{item}
+										</li>
+									{/each}
+								</ul>
+							</div>
+						</div>
+					</div>
 
 					<!-- Includes -->
-					<h6>Includes</h6>
-					<ul class="mb-3">
-						{#each includes as item, index}
-							<li>{item}</li>
-						{/each}
-					</ul>
+					<div class="detail-section">
+						<div class="d-flex align-items-start p-3 bg-light rounded mb-3">
+							<i class="fa fa-check-circle text-primary me-3 mt-1"></i>
+							<div class="flex-grow-1">
+								<h6 class="fw-semibold mb-2">What's Included</h6>
+								<ul class="list-unstyled mb-0">
+									{#each includes as item, index}
+										<li class="mb-1">
+											<i class="fa fa-plus text-success me-2"></i>
+											{item}
+										</li>
+									{/each}
+								</ul>
+							</div>
+						</div>
+					</div>
 
 					<!-- Excludes -->
-					<h6>Excludes</h6>
-					<ul class="mb-3">
-						{#each excludes as item, index}
-							<li>{item}</li>
-						{/each}
-					</ul>
-
-					<!-- Price -->
-					<h6>Price</h6>
-					<div class="mb-2">
-						<strong>With Transfer:</strong>
-						{selectedPackage?.priceWithTransfer}
+					<div class="detail-section">
+						<div class="d-flex align-items-start p-3 bg-white border rounded mb-3">
+							<i class="fa fa-times-circle text-primary me-3 mt-1"></i>
+							<div class="flex-grow-1">
+								<h6 class="fw-semibold mb-2">What's Excluded</h6>
+								<ul class="list-unstyled mb-0">
+									{#each excludes as item, index}
+										<li class="mb-1">
+											<i class="fa fa-minus text-danger me-2"></i>
+											{item}
+										</li>
+									{/each}
+								</ul>
+							</div>
+						</div>
 					</div>
-					<div class="mb-2">
-						<strong>Without Transfer:</strong>
-						{selectedPackage?.priceWithoutTransfer}
+
+					<!-- Price Section -->
+					<div class="detail-section">
+						<div class="d-flex align-items-start p-3 bg-light rounded mb-3">
+							<i class="fa fa-tag text-primary me-3 mt-1"></i>
+							<div class="flex-grow-1">
+								<h6 class="fw-semibold mb-3">Package Price</h6>
+
+								<!-- With Transfer -->
+								<div
+									class="d-flex justify-content-between align-items-center p-3 bg-white rounded mb-2"
+								>
+									<div class="d-flex align-items-center">
+										<i class="fa fa-car text-primary me-3"></i>
+										<div>
+											<div class="fw-semibold">With Transfer</div>
+											<small class="text-muted">Includes transportation service</small>
+										</div>
+									</div>
+									<div class="text-end">
+										<div class="h4 text-primary mb-0">${selectedPackage?.priceWithTransfer}</div>
+									</div>
+								</div>
+
+								<!-- Without Transfer -->
+								<div
+									class="d-flex justify-content-between align-items-center p-3 bg-white border rounded"
+								>
+									<div class="d-flex align-items-center">
+										<i class="fa fa-user text-muted me-3"></i>
+										<div>
+											<div class="fw-semibold">Without Transfer</div>
+											<small class="text-muted">Self transportation</small>
+										</div>
+									</div>
+									<div class="text-end">
+										<div class="h4 text-dark mb-0">${selectedPackage?.priceWithoutTransfer}</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -120,4 +189,5 @@
 		</div>
 	</div>
 </div>
+
 <!-- Process End -->
